@@ -1,3 +1,4 @@
+<!-- StudentList.vue -->
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 

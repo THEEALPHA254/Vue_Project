@@ -1,3 +1,4 @@
+<!-- HomeView.vue -->
 <template>
   <v-container>
     <v-row>
@@ -5,6 +6,7 @@
         <AddStudent ref="addstudentref" @addStudent="addStudent" @updateStudent="updateStudent" />
       </v-col>
     </v-row>
+      <StudentList/>
     <!-- Add a component to display the list of students here -->
   </v-container>
 </template>
@@ -12,6 +14,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import AddStudent from '@/components/AddStudent.vue';
+import StudentList from '@/components/StudentList.vue';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { useStudentStore } from '@/stores/counter';
@@ -44,12 +47,16 @@ async function fetchStudents() {
 async function addStudent(Student) {
   try {
     await api.post('students/', Student);
-    fetchStudents();
+    const response = await api.get('students/'); // Fetch updated list
+    if (Array.isArray(response.data)) {
+      all_students.value = response.data; // Update all_students with new data
+    }
     toast.success('Student added successfully');
   } catch (error) {
     console.error('Error adding Student:', error.response ? error.response.data : error.message);
   }
 }
+
 
 async function updateStudent(id, updatedStudent) {
   try {
@@ -61,31 +68,31 @@ async function updateStudent(id, updatedStudent) {
   }
 }
 
-async function deleteStudent(id) {
-  try {
-    await api.delete(`student/${id}/`);
-    all_students.value = all_students.value.filter(Student => Student.id !== id);
-    toast.success('Student deleted successfully');
-  } catch (error) {
-    console.error('Error deleting Student:', error.response ? error.response.data : error.message);
-  }
-}
+// async function deleteStudent(id) {
+//   try {
+//     await api.delete(`student/${id}/`);
+//     all_students.value = all_students.value.filter(Student => Student.id !== id);
+//     toast.success('Student deleted successfully');
+//   } catch (error) {
+//     console.error('Error deleting Student:', error.response ? error.response.data : error.message);
+//   }
+// }
 
-function editStudent(id) {
-  const Student = all_students.value.find(Student => Student.id === id);
-  if (Student) {
-    addstudentref.value.setEditStudent(Student);
-  } else {
-    console.error('Student not found with id:', id);
-  }
-}
+// function editStudent(id) {
+//   const Student = all_students.value.find(Student => Student.id === id);
+//   if (Student) {
+//     addstudentref.value.setEditStudent(Student);
+//   } else {
+//     console.error('Student not found with id:', id);
+//   }
+// }
 
 onMounted(() => {
   fetchStudents();
 
   if (studentStore.selectedStudent) {
     addstudentref.value.setEditStudent(studentStore.selectedStudent);
-    studentStore.clearSelectedStudent();
+    // studentStore.clearSelectedStudent();
   }
 });
 </script>

@@ -1,3 +1,4 @@
+// counter.js
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
@@ -18,8 +19,8 @@ export const useStudentStore = defineStore('studentStore', {
     selectedStudent: null
   }),
   actions: {
-    setSelectedStudent(student) {
-      this.selectedStudent = student;
+    setSelectedStudent(Student) {
+      this.selectedStudent = Student;
     },
     clearSelectedStudent() {
       this.selectedStudent = null;
