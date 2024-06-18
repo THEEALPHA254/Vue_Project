@@ -44,14 +44,15 @@ async function fetchStudents() {
   }
 }
 
+
 async function addStudent(Student) {
   try {
-    await api.post('students/', Student);
-    const response = await api.get('students/'); // Fetch updated list
-    if (Array.isArray(response.data)) {
-      all_students.value = response.data; // Update all_students with new data
-    }
-    toast.success('Student added successfully');
+    api.post('students/', Student).then((response)=>{
+      fetchStudents()
+      toast.success('Student added successfully');
+    }).catch((err)=>{
+      toast.error('Failed to add student');
+    })
   } catch (error) {
     console.error('Error adding Student:', error.response ? error.response.data : error.message);
   }
@@ -68,30 +69,15 @@ async function updateStudent(id, updatedStudent) {
   }
 }
 
-// async function deleteStudent(id) {
-//   try {
-//     await api.delete(`student/${id}/`);
-//     all_students.value = all_students.value.filter(Student => Student.id !== id);
-//     toast.success('Student deleted successfully');
-//   } catch (error) {
-//     console.error('Error deleting Student:', error.response ? error.response.data : error.message);
-//   }
-// }
-
-// function editStudent(id) {
-//   const Student = all_students.value.find(Student => Student.id === id);
-//   if (Student) {
-//     addstudentref.value.setEditStudent(Student);
-//   } else {
-//     console.error('Student not found with id:', id);
-//   }
-// }
 
 onMounted(() => {
   fetchStudents();
 
   if (studentStore.selectedStudent) {
-    addstudentref.value.setEditStudent(studentStore.selectedStudent);
+    setTimeout(()=>{
+
+      addstudentref.value.setEditStudent(studentStore.selectedStudent);
+    },1000)
     // studentStore.clearSelectedStudent();
   }
 });

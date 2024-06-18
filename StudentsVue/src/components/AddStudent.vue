@@ -9,18 +9,18 @@
           </v-alert>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field v-model="studentName" label="Student Name" required></v-text-field>
+          <v-text-field variant="outlined" v-model="studentName" label="Student Name" required></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field v-model="course" label="Course" required></v-text-field>
+          <v-text-field variant="outlined" v-model="course" label="Course" required></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="6">
-          <v-text-field v-model="department" label="Department"></v-text-field>
+          <v-text-field variant="outlined" v-model="department" label="Department"></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field v-model="email" label="Email" required></v-text-field>
+          <v-text-field variant="outlined" v-model="email" label="Email" required></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-4">
@@ -59,7 +59,7 @@ function submitForm() {
     return alert('Please fill out all required fields');
   }
 
-  const Student = {
+  const payload = {
     studentName: studentName.value,
     course: course.value,
     department: department.value,
@@ -67,11 +67,11 @@ function submitForm() {
   };
 
   if (editing_mode.value) {
-    emit('updateStudent', selectedStudent.value.id, Student);
+    emit('updateStudent', selectedStudent.value.id, payload);
     editing_mode.value = false;
     selectedStudent.value = null;
   } else {
-    emit('addStudent', Student);
+    emit('addStudent', payload);
   }
 
   resetForm();
@@ -105,4 +105,8 @@ watch(() => studentStore.selectedStudent, (newStudent) => {
     setEditStudent(newStudent);
   }
 });
+
+defineExpose({
+  setEditStudent
+})
 </script>

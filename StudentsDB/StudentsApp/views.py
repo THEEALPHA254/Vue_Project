@@ -61,7 +61,14 @@ def students(request):
             }
             return Response(context)
         else:
-            return Response(serializer.errors)
+            return Response(
+            {
+                "success": False,
+                "message": "Validation error",
+                "errors": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
        
     
