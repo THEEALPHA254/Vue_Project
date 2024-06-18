@@ -1,32 +1,51 @@
-<!-- AddStudent.vue -->
 <template>
-  <v-form @submit.prevent="submitForm" ref="form">
+  <v-form @submit.prevent="submitForm">
     <v-container>
       <v-row>
         <v-col cols="12">
           <v-alert v-if="editing_mode" type="info">
-            Edit clicked Student
+            Edit clicked Name
           </v-alert>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="studentName" label="Student Name" :rules="[rules.required]" required></v-text-field>
+          <v-text-field variant="outlined"
+            v-model="studentName"
+            label="Name"
+            :error-messages="errors.studentName"
+            required
+          ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="course" label="Course" ></v-text-field>
+          <v-text-field variant="outlined"
+            v-model="contact"
+            label="Contact"
+            :error-messages="errors.contact"
+            required
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="department" label="Department"></v-text-field>
+          <v-text-field variant="outlined"
+            v-model="department"
+            label="Department"
+            :error-messages="errors.department"
+            required
+          ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="email" label="Email" :rules="[rules.required, rules.email]" required></v-text-field>
+          <v-text-field variant="outlined"
+            v-model="email"
+            label="Email"
+            :error-messages="errors.email"
+            required
+          ></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-4">
         <v-col cols="6">
-          <v-btn :color="editing_mode ? 'warning' : 'primary'" type="submit" >
-            {{ editing_mode ? 'Update' : 'Add Student' }} 
+          <v-btn :color="editing_mode ? 'warning' : 'primary'" type="submit">
+            {{ editing_mode ? 'Update' : 'Add Student' }}
           </v-btn>
         </v-col>
         <v-col cols="6">
@@ -41,38 +60,65 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { useStudentStore } from '@/stores/counter.js'; // Adjust import path as per your actual store path
+import { useStudentStore } from '@/stores/counter.js';
+//import { useRouter } from 'vue-router';
 
 const emit = defineEmits(['addStudent', 'updateStudent']);
 
 const studentStore = useStudentStore();
+//const router = useRouter();
 
 const studentName = ref('');
-const course = ref('');
+const contact = ref('');
 const department = ref('');
 const email = ref('');
 const editing_mode = ref(false);
 const selectedStudent = ref(null);
+let errors = ref({
+  studentName: [],
+  contact: [],
+  department: [],
+  email: []
+});
 
-const form = ref(null);
+function validateForm() {
+  errors.value.studentName = [];
+  errors.value.contact = [];
+  errors.value.department = [];
+  errors.value.email = [];
 
-const rules = {
-  required: value => !!value || 'Required.',
-  email: value => {
-    const pattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    return pattern.test(value) || 'Invalid e-mail.';
-  },
-};
+  if (studentName.value.length < 2) {
+    errors.value.studentName.push('Name needs to be at least 2 characters.');
+  }
+
+  if (!contact.value.match(/^\d{9,}$/)) {
+    errors.value.contact.push('Phone number needs to be at least 9 digits.');
+  }
+
+  if (department.value.length < 2) {
+    errors.value.department.push('Department needs to be at least 2 characters.');
+  }
+
+  if (!email.value.match(/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i)) {
+    errors.value.email.push('Must be a valid e-mail.example@gmail.com');
+  }
+
+  return (
+    errors.value.studentName.length === 0 &&
+    errors.value.contact.length === 0 &&
+    errors.value.department.length === 0 &&
+    errors.value.email.length === 0
+  );
+}
 
 function submitForm() {
-  if (!form.value.validate()) {
-    alert('Please fill out all required fields correctly.');
+  if (!validateForm()) {
     return;
   }
 
   const payload = {
     studentName: studentName.value,
-    course: course.value,
+    contact: contact.value,
     department: department.value,
     email: email.value
   };
@@ -85,12 +131,12 @@ function submitForm() {
     emit('addStudent', payload);
   }
 
-resetForm();
+  resetForm();
 }
 
 function setEditStudent(student) {
   studentName.value = student.studentName;
-  course.value = student.course;
+  contact.value = student.contact;
   department.value = student.department;
   email.value = student.email;
   selectedStudent.value = student;
@@ -105,21 +151,24 @@ function discardEdit() {
 
 function resetForm() {
   studentName.value = '';
-  course.value = '';
+  contact.value = '';
   department.value = '';
   email.value = '';
-  form.value.resetValidation();
-  form.value.reset();
+  errors.value = {
+    studentName: [],
+    contact: [],
+    department: [],
+    email: []
+  };
 }
 
+defineExpose({
+  setEditStudent
+});
 // Watch for changes in the selectedStudent from the store
 watch(() => studentStore.selectedStudent, (newStudent) => {
   if (newStudent) {
     setEditStudent(newStudent);
   }
-});
-
-defineExpose({
-  setEditStudent
 });
 </script>

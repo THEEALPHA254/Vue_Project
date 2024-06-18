@@ -28,7 +28,7 @@ function editStudent(id) {
         <div class="card my-3" v-for="Student in all_students" :key="Student.id">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span>{{ Student.studentName }} | {{ Student.course }} | {{ Student.department }} | {{ Student.email }}</span>
+                    <span>{{ Student.studentName }} | {{ Student.contact }} | {{ Student.department }} | {{ Student.email }}</span>
                     <div>
                         <i class="fa-solid fa-edit me-4" @click="editStudent(Student.id)"></i>
                         <i class="fa-solid fa-trash " @click.stop="deleteStudent(Student.id)"></i>
