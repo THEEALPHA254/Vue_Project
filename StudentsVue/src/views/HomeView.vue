@@ -6,15 +6,14 @@
         <AddStudent ref="addstudentref" @addStudent="addStudent" @updateStudent="updateStudent" />
       </v-col>
     </v-row>
-      <StudentList/>
-    <!-- Add a component to display the list of students here -->
+
   </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import AddStudent from '@/components/AddStudent.vue';
-import StudentList from '@/components/StudentList.vue';
+//import StudentList from '@/components/StudentList.vue';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { useStudentStore } from '@/stores/counter';
@@ -77,8 +76,8 @@ onMounted(() => {
     setTimeout(()=>{
 
       addstudentref.value.setEditStudent(studentStore.selectedStudent);
+      studentStore.clearSelectedStudent();
     },1000)
-    // studentStore.clearSelectedStudent();
   }
 });
 </script>

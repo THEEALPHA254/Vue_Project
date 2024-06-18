@@ -1,6 +1,6 @@
 <!-- AddStudent.vue -->
 <template>
-  <v-form @submit.prevent="submitForm">
+  <v-form @submit.prevent="submitForm" ref="form">
     <v-container>
       <v-row>
         <v-col cols="12">
@@ -9,10 +9,10 @@
           </v-alert>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="studentName" label="Student Name" required></v-text-field>
+          <v-text-field variant="outlined" v-model="studentName" label="Student Name" :rules="[rules.required]" required></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="course" label="Course" required></v-text-field>
+          <v-text-field variant="outlined" v-model="course" label="Course" ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
@@ -20,14 +20,16 @@
           <v-text-field variant="outlined" v-model="department" label="Department"></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-text-field variant="outlined" v-model="email" label="Email" required></v-text-field>
+          <v-text-field variant="outlined" v-model="email" label="Email" :rules="[rules.required, rules.email]" required></v-text-field>
         </v-col>
       </v-row>
       <v-row class="mt-4">
-        <v-col cols="12">
-          <v-btn :color="editing_mode ? 'warning' : 'primary'" type="submit">
-            {{ editing_mode ? 'Update' : 'Add Student' }}
+        <v-col cols="6">
+          <v-btn :color="editing_mode ? 'warning' : 'primary'" type="submit" >
+            {{ editing_mode ? 'Update' : 'Add Student' }} 
           </v-btn>
+        </v-col>
+        <v-col cols="6">
           <v-btn v-if="editing_mode" color="dark" class="mt-2" @click="discardEdit">
             Discard Edit
           </v-btn>
@@ -38,25 +40,34 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 import { useStudentStore } from '@/stores/counter.js'; // Adjust import path as per your actual store path
-//import { useRouter } from 'vue-router';
 
-const emit = defineEmits(['addStudent', 'updateStudent']); // Ensure defineEmits is imported
+const emit = defineEmits(['addStudent', 'updateStudent']);
 
-const studentStore = useStudentStore(); // Ensure useStudentStore is correctly imported
-//const router = useRouter();
+const studentStore = useStudentStore();
 
-let studentName = ref('');
-let course = ref('');
-let department = ref('');
-let email = ref('');
-let editing_mode = ref(false);
-let selectedStudent = ref(null);
+const studentName = ref('');
+const course = ref('');
+const department = ref('');
+const email = ref('');
+const editing_mode = ref(false);
+const selectedStudent = ref(null);
+
+const form = ref(null);
+
+const rules = {
+  required: value => !!value || 'Required.',
+  email: value => {
+    const pattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    return pattern.test(value) || 'Invalid e-mail.';
+  },
+};
 
 function submitForm() {
-  if (!studentName.value || !course.value || !department.value || !email.value) {
-    return alert('Please fill out all required fields');
+  if (!form.value.validate()) {
+    alert('Please fill out all required fields correctly.');
+    return;
   }
 
   const payload = {
@@ -74,15 +85,15 @@ function submitForm() {
     emit('addStudent', payload);
   }
 
-  resetForm();
+resetForm();
 }
 
-function setEditStudent(Student) {
-  studentName.value = Student.studentName;
-  course.value = Student.course;
-  department.value = Student.department;
-  email.value = Student.email;
-  selectedStudent.value = Student;
+function setEditStudent(student) {
+  studentName.value = student.studentName;
+  course.value = student.course;
+  department.value = student.department;
+  email.value = student.email;
+  selectedStudent.value = student;
   editing_mode.value = true;
 }
 
@@ -97,6 +108,8 @@ function resetForm() {
   course.value = '';
   department.value = '';
   email.value = '';
+  form.value.resetValidation();
+  form.value.reset();
 }
 
 // Watch for changes in the selectedStudent from the store
@@ -108,5 +121,5 @@ watch(() => studentStore.selectedStudent, (newStudent) => {
 
 defineExpose({
   setEditStudent
-})
+});
 </script>
