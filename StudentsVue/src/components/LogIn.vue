@@ -5,7 +5,7 @@
         <v-card class="mx-auto px-6 py-8" max-width="344">
           <v-form @submit.prevent="login">
             <v-text-field
-              v-model="user.username"
+              v-model="form.username"
               :rules="[required]"
               label="Username"
               placeholder="Enter your username"
@@ -13,7 +13,7 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="user.password"
+              v-model="form.password"
               :rules="[required]"
               label="Password"
               placeholder="Enter your password"
@@ -22,8 +22,6 @@
             ></v-text-field>
 
             <v-btn
-              :disabled="loading"
-              :loading="loading"
               color="success"
               size="large"
               type="submit"
@@ -32,6 +30,19 @@
             >
               Login
             </v-btn>
+
+            <v-divider class="my-4"></v-divider> <!-- Add a divider for spacing -->
+
+            <v-btn
+              :to="{ name: 'register' }"
+              color="success"
+              size="large"
+              type="submit"
+              variant="elevated"
+              block
+              >
+              SigIn
+            </v-btn>
           </v-form>
         </v-card>
       </v-col>
@@ -39,39 +50,39 @@
   </v-sheet>
 </template>
 
-<script>
-import { reactive } from 'vue';
+<script setup>
+import { ref } from 'vue';
 import { useAuthStore } from '@/stores/counter';
 import { toast } from 'vue3-toastify';
+import { useRouter } from 'vue-router';
 
-export default {
-  setup() {
-    const authStore = useAuthStore();
-    const user = reactive({
-      username: '',
-      password: '',
-    });
+const authStore = useAuthStore();
+const router = useRouter();
+const form = ref({
+  username: '',
+  password: '',
+});
 
-    const login = async () => {
-      try {
-        await authStore.login(user);
-        toast.success('Login successful');
-        // Optionally redirect to another page after successful login
-      } catch (error) {
-        console.error('Login error:', error);
-        toast.error('Failed to login. Please try again later.');
-      }
-    };
-
-    const required = value => !!value || 'Required';
-
-    return {
-      user,
-      login,
-      required,
-    };
-  },
+const login = async () => {
+  try {
+    await authStore.login(form.value);
+    toast.success('Login successful');
+    // Optionally redirect to another page after successful login
+    router.push('/');
+  } catch (error) {
+    console.error('Login error:', error);
+    console.log(error); // Add this line for debugging
+    if (error.detail === 'Invalid credentials') {
+      // Redirect to registration page if credentials are not found
+      toast.error('Credentials not found. Redirecting to registration page.');
+      router.push('/register');
+    } else {
+      toast.error('Failed to login. Please try again later.');
+    }
+  }
 };
+
+const required = value => !!value || 'Required';
 </script>
 
 <style scoped>

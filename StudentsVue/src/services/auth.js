@@ -34,14 +34,20 @@ axiosInstance.interceptors.response.use(
 );
 
 export default {
-  register(user) {
-    return axiosInstance.post('register/', {
-      username: user.username,
-      email: user.email,
-      password: user.password,
-    });
+  async register(user) {
+    try {
+      const response = await axiosInstance.post('register/', {
+        username: user.username,
+        email: user.email,
+        password: user.password,
+      });
+      return response.data; // Return any relevant data upon successful registration
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error; // Propagate error to handle it further if needed
+    }
   },
-
+  
   async login(user) {
     try {
       const response = await axiosInstance.post('login/', {
@@ -54,21 +60,20 @@ export default {
       return response;
     } catch (error) {
       console.error('Login error:', error);
+      if (error.response && error.response.status === 401) {
+        // Redirect to registration page if credentials are not found
+        return { redirectToRegister: true };
+      }
       throw error;
     }
   },
 
-  async getUsers() {
+  async getUserByUsername(username) {
     try {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        throw new Error('No access token found');
-      }
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const response = await axiosInstance.get('users/');
-      return response.data;
+      const response = await axiosInstance.get(`users/?username=${username}`);
+      return response.data; // Return user data if found
     } catch (error) {
-      console.error('Get users error:', error);
+      console.error('Get user by username error:', error);
       throw error;
     }
   },
