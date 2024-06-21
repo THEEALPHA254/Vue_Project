@@ -23,6 +23,7 @@ import axios from 'axios';
 import StudentList from '@/components/StudentList.vue';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/stores/counter.js';
+import { toast } from 'vue3-toastify';
 
 let all_students = ref([]);
 const router = useRouter();
@@ -48,6 +49,7 @@ async function deleteStudent(id) {
   try {
     await api.delete(`student/${id}/`);
     all_students.value = all_students.value.filter(student => student.id !== id);
+    toast.warn("Student deleted!!")
   } catch (error) {
     console.error('Error deleting student:', error);
   }

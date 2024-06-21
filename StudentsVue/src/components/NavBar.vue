@@ -17,6 +17,12 @@
                 <li class="nav-item">
                     <RouterLink class="nav-link" to="/sum">Counter</RouterLink>
                 </li>
+                <li class="nav-item">
+                    <RouterLink class="nav-link" to="/login">LogIn</RouterLink>
+                </li>
+                <li class="nav-item">
+                    <RouterLink class="nav-link" to="/register">Register</RouterLink>
+                </li>
             </ul>
             <form class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
