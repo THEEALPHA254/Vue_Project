@@ -1,3 +1,4 @@
+<!-- Register.vue -->
 <template>
   <v-sheet rounded>
     <v-row justify="center">

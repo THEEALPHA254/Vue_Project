@@ -1,27 +1,52 @@
 <template>
-  <div>
-    <h2>Login</h2>
-    <form @submit.prevent="login">
-      <div>
-        <label for="username">Username:</label>
-        <input type="text" v-model="user.username" required>
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" v-model="user.password" required>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  </div>
+  <v-sheet rounded>
+    <v-row justify="center">
+      <v-col cols="12" sm="6" md="4" lg="3">
+        <v-card class="mx-auto px-6 py-8" max-width="344">
+          <v-form @submit.prevent="login">
+            <v-text-field
+              v-model="user.username"
+              :rules="[required]"
+              label="Username"
+              placeholder="Enter your username"
+              clearable
+            ></v-text-field>
+
+            <v-text-field
+              v-model="user.password"
+              :rules="[required]"
+              label="Password"
+              placeholder="Enter your password"
+              clearable
+              type="password"
+            ></v-text-field>
+
+            <v-btn
+              :disabled="loading"
+              :loading="loading"
+              color="success"
+              size="large"
+              type="submit"
+              variant="elevated"
+              block
+            >
+              Login
+            </v-btn>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-sheet>
 </template>
 
 <script>
 import { reactive } from 'vue';
-import AuthService from '../services/auth';
+import { useAuthStore } from '@/stores/counter';
 import { toast } from 'vue3-toastify';
 
 export default {
   setup() {
+    const authStore = useAuthStore();
     const user = reactive({
       username: '',
       password: '',
@@ -29,26 +54,26 @@ export default {
 
     const login = async () => {
       try {
-        const response = await AuthService.login(user);
-        console.log('Login successful:', response.data);
-        toast.success("LogIn successful")
-        
-        // Optionally, redirect to dashboard or fetch additional data after login
+        await authStore.login(user);
+        toast.success('Login successful');
+        // Optionally redirect to another page after successful login
       } catch (error) {
         console.error('Login error:', error);
-
-        if (error.response && error.response.status === 400) {
-          toast.error('Invalid username or password');
-        } else {
-          toast.error('Failed to login. Please try again later.');
-        }
+        toast.error('Failed to login. Please try again later.');
       }
     };
+
+    const required = value => !!value || 'Required';
 
     return {
       user,
       login,
+      required,
     };
   },
 };
 </script>
+
+<style scoped>
+/* Add any scoped styles here if needed */
+</style>
