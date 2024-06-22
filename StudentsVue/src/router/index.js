@@ -6,7 +6,10 @@ import Sum from '@/views/Sum.vue'
 import Students from '@/views/Students.vue'
 import Register from '@/components/Register.vue'
 import LogIn from '@/components/LogIn.vue'
-
+import Product from '@/components/Product.vue'
+import Category from '@/components/Category.vue'
+import Brand from '@/components/Brand.vue'
+import ProductView from '@/views/ProductView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -40,7 +43,26 @@ const router = createRouter({
       name: "login",
       component: LogIn,
     },
-    
+    {
+      path: "/product",
+      name: "product",
+      component: Product,
+    },
+    {
+      path: "/productView",
+      name: "productView",
+      component: ProductView,
+    },
+    {
+      path: "/category",
+      name: "category",
+      component: Category,
+    },
+    {
+      path: "/brand",
+      name: "brand",
+      component: Brand,
+    },
     {
       path: '/about',
       name: 'about',

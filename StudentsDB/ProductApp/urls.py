@@ -1,5 +1,4 @@
-# urls.py
-
+# ProductApp/urls.py
 from django.urls import path
 from . import views
 

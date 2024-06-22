@@ -17,6 +17,9 @@
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'sum' }">Counter</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'product' }">Product</router-link>
+          </li>
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item ms-auto">
