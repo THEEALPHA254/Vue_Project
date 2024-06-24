@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+
 const api = axios.create({
   baseURL: 'http://localhost:8000/product_api/',
   headers: {
@@ -33,10 +34,3 @@ export const useProductStore = defineStore({
     }
   }
 });
-
-// Assuming you want to fetch brands and categories in a component, you should do it within the component setup function, not here.
-// Remove the following lines from here:
-// onMounted(() => {
-//   productStore.fetchBrands();
-//   productStore.fetchCategories();
-// });

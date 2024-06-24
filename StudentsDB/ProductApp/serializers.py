@@ -6,12 +6,12 @@ from .models import Brand, Category, Product
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = '__all__'
+        fields = ['id', 'name']
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name']
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:

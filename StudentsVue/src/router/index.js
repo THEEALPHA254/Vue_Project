@@ -9,7 +9,8 @@ import LogIn from '@/components/LogIn.vue'
 import Product from '@/components/Product.vue'
 import Category from '@/components/Category.vue'
 import Brand from '@/components/Brand.vue'
-import ProductView from '@/views/ProductView.vue'
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -47,11 +48,6 @@ const router = createRouter({
       path: "/product",
       name: "product",
       component: Product,
-    },
-    {
-      path: "/productView",
-      name: "productView",
-      component: ProductView,
     },
     {
       path: "/category",

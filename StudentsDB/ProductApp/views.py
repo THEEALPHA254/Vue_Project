@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Brand, Category, Product
+from .models import Brand, Category, Product, FileUpload
 from .serializers import BrandSerializer, CategorySerializer, ProductSerializer
 
 # Brand Views
@@ -109,3 +109,17 @@ def product_detail(request, pk):
     elif request.method == 'DELETE':
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['POST'])
+def upload_file(request):
+    if request.method == 'POST':
+        file = request.FILES.get('file_url')
+        uploaded_file = FileUpload(file_url=file)
+        uploaded_file.save()
+        # Generate the absolute URL using request.build_absolute_uri()
+        file_url = uploaded_file.file_url.url
+        file_absolute_url = request.build_absolute_uri(file_url)
+        file_absolute_url=file_absolute_url.replace("http://","http://")
+
+        file_url = uploaded_file.file_url.url
+        return Response({'Success': 'True', 'Code': 200, 'message': 'Successful' ,'file_url': file_absolute_url,}, status=status.HTTP_200_OK)
