@@ -26,8 +26,10 @@
               :rules="[required]"
               label="Password"
               placeholder="Enter your password"
+              :type="show1 ? 'text' : 'password'"
+              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+               @click:append="show1 = !show1"
               clearable
-              type="password"
             ></v-text-field>
 
             <v-btn
@@ -65,6 +67,7 @@ const router = useRouter();
 
 const required = value => !!value || 'Required';
 const email = value => /.+@.+\..+/.test(value) || 'Email must be valid';
+const show1 = ref(false);
 
 const register = async () => {
   if (!form.value.username || !form.value.email || !form.value.password) {
@@ -90,6 +93,8 @@ const register = async () => {
     loading.value = false;
   }
 };
+
+
 </script>
 
 <style scoped>

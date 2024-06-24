@@ -17,8 +17,11 @@
               :rules="[required]"
               label="Password"
               placeholder="Enter your password"
+              :type="show1 ? 'text' : 'password'"
+              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+               @click:append="show1 = !show1"
               clearable
-              type="password"
+              
             ></v-text-field>
 
             <v-btn
@@ -63,6 +66,9 @@ const form = ref({
   password: '',
 });
 
+const show1 = ref(false);
+const required = value => !!value || 'Required';
+
 const login = async () => {
   try {
     await authStore.login(form.value);
@@ -82,7 +88,7 @@ const login = async () => {
   }
 };
 
-const required = value => !!value || 'Required';
+
 </script>
 
 <style scoped>

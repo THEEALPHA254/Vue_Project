@@ -3,15 +3,43 @@
     <v-form @submit.prevent="saveProduct">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="productName" label="Product Name"></v-text-field>
-          <v-text-field v-model="price" label="Price"></v-text-field>
+          <v-text-field 
+          v-model="productName" 
+          label="Product Name"
+          placeholder="Product" 
+          type="text"
+          :rules="[required]"
+          ></v-text-field>
+          <v-text-field 
+          v-model="price" 
+          label="Price"
+          :rules="[required]"
+          prefix="KES"
+          ></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="sku" label="SKU"></v-text-field>
-          <v-text-field v-model="sellingPrice" label="Selling Price"></v-text-field>
+          <v-text-field 
+          v-model="sku" 
+          label="SKU"
+          placeholder="#P000" 
+          type="text"
+          :rules="[required]"
+          ></v-text-field>
+          <v-text-field 
+          v-model="sellingPrice" 
+          label="Selling Price"
+          :rules="[required]"
+          prefix="KES"
+          ></v-text-field>
         </v-col>
       </v-row>
-      <v-textarea v-model="description" label="Description"></v-textarea>
+      <v-textarea 
+        v-model="description" 
+        label="Description"
+        placeholder="Product" 
+        type="text"
+        :rules="[required]"
+      ></v-textarea>
       <v-file-input v-model="image" label="Product Image" accept="image/*"></v-file-input>
       <v-row>
         <v-col cols="6">
@@ -130,6 +158,8 @@ onMounted(async () => {
     console.error('No categories fetched');
   }
 });
+
+const required = value => !!value || 'Required';
 </script>
 
 <style scoped>
