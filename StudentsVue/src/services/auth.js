@@ -1,4 +1,3 @@
-// auth.js
 import axios from 'axios';
 
 const api = 'http://localhost:8000/api/';
@@ -33,7 +32,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default {
+const auth = {
   async register(user) {
     try {
       const response = await axiosInstance.post('register/', {
@@ -78,3 +77,5 @@ export default {
     }
   },
 };
+
+export default auth;

@@ -1,43 +1,76 @@
 from django.contrib.auth.models import User
-from rest_framework import generics, permissions
+from rest_framework import status, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
+from django.contrib.auth import authenticate
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = UserSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+@api_view(["POST"])
+@permission_classes([permissions.AllowAny])
+def RegisterView(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        user = User.objects.get(username=request.data.get('username'))
         refresh = RefreshToken.for_user(user)
-        return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        })
+        return Response(
+            {
+                "Success": "True",
+                "Code": 201,
+                "Details": {
+                    "user": UserSerializer(user).data,
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class LoginView(generics.GenericAPIView):
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = UserSerializer
+@api_view(["POST"])
+@permission_classes([permissions.AllowAny])
+def LoginView(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
 
-    def post(self, request, *args, **kwargs):
-        from django.contrib.auth import authenticate
-        user = authenticate(username=request.data.get('username'), password=request.data.get('password'))
+    if username and password:
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
-            return Response({
-                "user": UserSerializer(user, context=self.get_serializer_context()).data,
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            })
+            return Response(
+                {
+                    "Success": "True",
+                    "Code": 200,
+                    "Details": {
+                        "user": UserSerializer(user).data,
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
         else:
-            return Response({"detail": "Invalid credentials"}, status=400)
+            return Response(
+                {
+                    "Success": "False",
+                    "Code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Password and username didn't match",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    return Response(
+        {
+            "Success": "False",
+            "Code": status.HTTP_400_BAD_REQUEST,
+            "message": "Username and password are required",
+        },
+        status=status.HTTP_400_BAD_REQUEST,
+    )
 
-class UserListView(generics.ListAPIView):
-    queryset = User.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = UserSerializer
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def UserListView(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

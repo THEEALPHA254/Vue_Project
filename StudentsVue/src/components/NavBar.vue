@@ -47,7 +47,7 @@ const router = useRouter();
 const handleLoginOrRegister = () => {
   if (authStore.isAuthenticated) {
     // User is authenticated, redirect to another route
-    router.push('/'); // Example redirection
+    router.push('dashboard'); // Example redirection
   } else {
     // User is not authenticated, redirect to register page
     router.push('/login');
@@ -63,3 +63,5 @@ const logout = () => {
 <style scoped>
 /* Add any scoped styles here if needed */
 </style>
+
+
