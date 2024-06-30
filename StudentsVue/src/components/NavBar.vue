@@ -47,7 +47,7 @@ const router = useRouter();
 const handleLoginOrRegister = () => {
   if (authStore.isAuthenticated) {
     // User is authenticated, redirect to another route
-    router.push('dashboard'); // Example redirection
+    router.push('/'); // Example redirection
   } else {
     // User is not authenticated, redirect to register page
     router.push('/login');

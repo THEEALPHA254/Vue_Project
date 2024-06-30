@@ -20,7 +20,7 @@ axiosInstance.interceptors.response.use(
           refresh: refreshToken,
         });
         localStorage.setItem('access_token', response.data.access);
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
         originalRequest.headers['Authorization'] = `Bearer ${response.data.access}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
@@ -55,7 +55,7 @@ const auth = {
       });
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
       return response;
     } catch (error) {
       console.error('Login error:', error);
@@ -75,7 +75,7 @@ const auth = {
       console.error('Get user by username error:', error);
       throw error;
     }
-  },
+  }
 };
 
 export default auth;

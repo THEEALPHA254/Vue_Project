@@ -1,8 +1,8 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from django.shortcuts import get_object_or_404
 from .models import Student
 from .serializers import StudentSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 
@@ -43,6 +43,7 @@ def student(request,pk):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([permissions.IsAuthenticated])
 def students(request):
     if request.method == "GET":
         students_queryset = Student.objects.all()
