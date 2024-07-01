@@ -69,18 +69,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useProductStore } from '@/stores/Product_Store'; // Adjust path as needed
-import axios from 'axios';
+import axiosInstance from '@/services/auth';
 import { toast } from 'vue3-toastify';
 
 import useFileUpload from '@/compossibles/fileupload'; // Path to your composable
 const { isUploading: isUploadingImages, uploadedFilesUrls: uploadedImageUrls, uploadFiles: uploadImages } = useFileUpload();
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/product_api/',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+const Api = axiosInstance
 
 const productStore = useProductStore();
 
@@ -121,7 +116,7 @@ const saveProduct = async () => {
   formData.append('category', selectedCategory.value);
 
   try {
-    const response = await api.post('products/', formData);
+    const response = await Api.post('product_api/products/', formData);
     console.log('Product saved:', response.data);
     toast.success('Product saved successfully.');
     resetForm();

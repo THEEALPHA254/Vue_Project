@@ -9,25 +9,26 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link active" aria-current="page" :to="{ name: 'home' }">Home</router-link>
+            <router-link class="nav-link" :class="{ active: $route.name === 'home' }" aria-current="page" :to="{ name: 'home' }">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'students' }">Student</router-link>
+            <router-link class="nav-link" :class="{ active: $route.name === 'students' }" aria-current="page" :to="{ name: 'students' }">Student</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'sum' }">Counter</router-link>
+            <router-link class="nav-link" :class="{ active: $route.name === 'sum' }" aria-current="page"  :to="{ name: 'sum' }">Counter</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'product' }">Product</router-link>
+            <router-link class="nav-link" :class="{ active: $route.name === 'product' }" aria-current="page"  :to="{ name: 'product' }">Product</router-link>
           </li>
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">
+
           <li class="nav-item ms-auto">
-            <template v-if="!authStore.isAuthenticated">
+            <template v-if="!isAuthenticated">
               <button class="btn btn-outline-success" @click="handleLoginOrRegister">LogIn/Register</button>
             </template>
             <template v-else>
-              <span class="nav-link">Welcome, {{ authStore.user.username }}</span>
+              <span class="nav-link">Welcome, {{ user ? user.username : 'User' }}</span>
               <button class="btn btn-outline-danger" @click="logout">Logout</button>
             </template>
           </li>
@@ -38,30 +39,41 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/counter';
+import { computed } from 'vue';
+import { useAuthStore } from '@/stores/counter'; // Ensure this is the correct path to your authStore
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const router = useRouter();
 
+// Use computed properties to reactively get the authentication state and user information
+const isAuthenticated = computed(() => authStore.state.isAuthenticated);
+const user = computed(() => authStore.state.user);
+
 const handleLoginOrRegister = () => {
-  if (authStore.isAuthenticated) {
+  if (isAuthenticated.value) {
     // User is authenticated, redirect to another route
     router.push('/'); // Example redirection
   } else {
-    // User is not authenticated, redirect to register page
+    // User is not authenticated, redirect to login page
     router.push('/login');
   }
 };
 
 const logout = () => {
-  authStore.logout();
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('userData')
+
+  authStore.state.user = null
+  authStore.state.isAuthenticated = false
+
+
   // Optionally redirect to another page after logout
+  router.push({name: 'login'})
 };
 </script>
 
 <style scoped>
 /* Add any scoped styles here if needed */
 </style>
-
-

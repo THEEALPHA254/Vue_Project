@@ -10,20 +10,15 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../services/auth';
 import { toast } from 'vue3-toastify';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/product_api/',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+const Api = axiosInstance
 
 const brandName = ref('');
 
 const saveBrandName = () => {
-  api.post('brands/', { name: brandName.value }) // Using the api instance and corrected URL
+  Api.post('product_api/brands/', { name: brandName.value }) // Using the api instance and corrected URL
     .then(response => {
       console.log('Brand saved:', response.data);
       toast.success("New Brand saved Successfully");
@@ -31,6 +26,7 @@ const saveBrandName = () => {
     })
     .catch(error => console.error('Error saving brand:', error));
 };
+
 </script>
 
 <style scoped>

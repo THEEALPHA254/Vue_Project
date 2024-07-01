@@ -19,26 +19,22 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
 import StudentList from '@/components/StudentList.vue';
 import { useRouter } from 'vue-router';
 import { useStudentStore } from '@/stores/counter.js';
 import { toast } from 'vue3-toastify';
+import axiosInstance from '../services/auth';
+
 
 let all_students = ref([]);
 const router = useRouter();
 const studentStore = useStudentStore();
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api/',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+const Api = axiosInstance
 
 async function fetchStudents() {
   try {
-    const response = await api.get('students/');
+    const response = await Api.get('api/students/');
     all_students.value = response.data;
   } catch (error) {
     console.error('Error fetching students:', error);
@@ -47,7 +43,7 @@ async function fetchStudents() {
 
 async function deleteStudent(id) {
   try {
-    await api.delete(`student/${id}/`);
+    await Api.delete(`api/student/${id}/`);
     all_students.value = all_students.value.filter(student => student.id !== id);
     toast.warn("Student deleted!!")
   } catch (error) {

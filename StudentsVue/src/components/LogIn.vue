@@ -58,6 +58,9 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/counter';
 import { toast } from 'vue3-toastify';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import axiosInstance from '@/services/auth';
+
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -71,15 +74,36 @@ const required = value => !!value || 'Required';
 
 const login = async () => {
   try {
-    await authStore.login(form.value);
-    toast.success('Login successful');
-    // Optionally redirect to another page after successful login
-    router.push('/');
+
+    try {
+      const response = await axiosInstance.post('api/login/', form.value);
+
+      console.log(response);
+
+
+      localStorage.setItem('access_token', response.data.Details.access);
+      localStorage.setItem('refresh_token', response.data.Details.refresh);
+      localStorage.setItem('userData', JSON.stringify(response.data.Details.user))
+
+      authStore.state.user = response.data.Details.user
+      authStore.state.isAuthenticated = true
+      
+      router.push({name: 'home'}).then(()=>{
+        toast.success('Login successful');
+      })
+
+
+      return response;
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response && error.response.status === 401) {
+        return { redirectToRegister: true };
+      }
+      throw error;
+    }
   } catch (error) {
     console.error('Login error:', error);
-    console.log(error); // Add this line for debugging
-    if (error.detail === 'Invalid credentials') {
-      // Redirect to registration page if credentials are not found
+    if (error.response?.data?.detail === 'Invalid credentials') {
       toast.error('Credentials not found. Redirecting to registration page.');
       router.push('/register');
     } else {
@@ -87,6 +111,8 @@ const login = async () => {
     }
   }
 };
+
+
 
 
 </script>

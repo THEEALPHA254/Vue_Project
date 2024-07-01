@@ -1,36 +1,35 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import axiosInstance from '@/services/auth';
+import { ref } from 'vue';
 
+const Api = axiosInstance;
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/product_api/',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+export const useProductStore = defineStore('product', () => {
+  const brands = ref([]);
+  const categories = ref([]);
 
-export const useProductStore = defineStore({
-  id: 'product',
-  state: () => ({
-    brands: [],
-    categories: []
-  }),
-  actions: {
-    async fetchBrands() {
-      try {
-        const response = await api.get('brands/');
-        this.brands = response.data; // Using `this` to refer to the store instance
-      } catch (error) {
-        console.error('Error fetching brands:', error);
-      }
-    },
-    async fetchCategories() {
-      try {
-        const response = await api.get('categories/');
-        this.categories = response.data; // Using `this` to refer to the store instance
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
+  const fetchBrands = async () => {
+    try {
+      const response = await Api.get('product_api/brands/');
+      brands.value = response.data;
+    } catch (error) {
+      console.error('Error fetching brands:', error);
     }
-  }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await Api.get('product_api/categories/');
+      categories.value = response.data;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  return {
+    brands,
+    categories,
+    fetchBrands,
+    fetchCategories
+  };
 });

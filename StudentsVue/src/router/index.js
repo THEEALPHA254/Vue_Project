@@ -17,7 +17,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: {
+        requireLogin: true
+      }
     },
     {
       path: "/sum",
@@ -33,6 +36,9 @@ const router = createRouter({
       path: "/students",
       name: "students",
       component: Students,
+      meta: {
+        requireLogin: true
+      }
     },
     {
       path: "/register",
@@ -43,21 +49,33 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LogIn,
+      meta: {
+        redirectIfLoggedIn: true
+      }
     },
     {
       path: "/product",
       name: "product",
       component: Product,
+      meta: {
+        requireLogin: true
+      }
     },
     {
       path: "/category",
       name: "category",
       component: Category,
+      meta: {
+        requireLogin: true
+      }
     },
     {
       path: "/brand",
       name: "brand",
       component: Brand,
+      meta: {
+        requireLogin: true
+      }
     },
     {
       path: '/about',
@@ -65,10 +83,37 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      component: () => import('../views/AboutView.vue'),
+      meta: {
+        requireLogin: true
+      }
     },
    
   ]
 })
 
+
+router.beforeEach((to, _, next)=>{
+  console.log('me')
+
+  const isUserLoggedIn = () => {
+    return localStorage.getItem('userData')
+  }
+
+  let status = isUserLoggedIn()
+
+  if(!status && to.meta.requireLogin == true){
+    next({ name: 'login'})
+  }
+  
+  console.log(to.meta.redirectIfLoggedIn);
+  if(to.meta.redirectIfLoggedIn == true && status){
+    next({ name: 'home' })
+  }
+  
+  return next()
+
+
+
+})
 export default router

@@ -13,25 +13,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import AddStudent from '@/components/AddStudent.vue';
-//import StudentList from '@/components/StudentList.vue';
-import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { useStudentStore } from '@/stores/counter';
+import axiosInstance from '@/services/auth';
 
 let all_students = ref([]);
 const addstudentref = ref(null);
 const studentStore = useStudentStore();
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api/',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+const Api = axiosInstance
 
 async function fetchStudents() {
   try {
-    const response = await api.get('students/');
+    const response = await Api.get('api/students/');
     if (Array.isArray(response.data)) {
       console.log('Fetched students', response.data);
       all_students.value = response.data;
@@ -46,7 +40,7 @@ async function fetchStudents() {
 
 async function addStudent(Student) {
   try {
-    api.post('students/', Student).then((response)=>{
+    Api.post('api/students/', Student).then((response)=>{
       fetchStudents()
       toast.success('Student added successfully');
     }).catch((err)=>{
@@ -60,7 +54,7 @@ async function addStudent(Student) {
 
 async function updateStudent(id, updatedStudent) {
   try {
-    await api.put(`student/${id}/`, updatedStudent);
+    await Api.put(`api/student/${id}/`, updatedStudent);
     fetchStudents();
     toast.success('Student updated successfully');
   } catch (error) {

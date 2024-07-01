@@ -1,10 +1,26 @@
 import axios from 'axios';
 
-const api = 'http://localhost:8000/api/';
+const Api = 'http://localhost:8000/';
 const axiosInstance = axios.create({
-  baseURL: api,
+  baseURL: Api, 
 });
 
+// Interceptor to include token in headers
+axiosInstance.interceptors.request.use(config => {
+  const token = localStorage.getItem('access_token');
+
+  console.log(token)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+
+
+
+// Interceptor to handle token refresh
 axiosInstance.interceptors.response.use(
   response => response,
   async error => {
@@ -13,11 +29,13 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refresh_token');
+        console.log('what')
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
-        const response = await axiosInstance.post('token/refresh/', {
+        const response = await axiosInstance.post('${Api}token/refresh/', {
           refresh: refreshToken,
+          
         });
         localStorage.setItem('access_token', response.data.access);
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
@@ -32,50 +50,5 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-const auth = {
-  async register(user) {
-    try {
-      const response = await axiosInstance.post('register/', {
-        username: user.username,
-        email: user.email,
-        password: user.password,
-      });
-      return response.data; // Return any relevant data upon successful registration
-    } catch (error) {
-      console.error('Registration error:', error);
-      throw error; // Propagate error to handle it further if needed
-    }
-  },
-  
-  async login(user) {
-    try {
-      const response = await axiosInstance.post('login/', {
-        username: user.username,
-        password: user.password,
-      });
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
-      return response;
-    } catch (error) {
-      console.error('Login error:', error);
-      if (error.response && error.response.status === 401) {
-        // Redirect to registration page if credentials are not found
-        return { redirectToRegister: true };
-      }
-      throw error;
-    }
-  },
 
-  async getUserByUsername(username) {
-    try {
-      const response = await axiosInstance.get(`users/?username=${username}`);
-      return response.data; // Return user data if found
-    } catch (error) {
-      console.error('Get user by username error:', error);
-      throw error;
-    }
-  }
-};
-
-export default auth;
+export default axiosInstance;
