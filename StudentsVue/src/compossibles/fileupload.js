@@ -1,14 +1,8 @@
 // useFileUpload.js
 import { ref } from "vue";
-import axios from "axios";
-// import axiosInst from "@/services/api";//
+import axiosInstance from '@/services/auth';
 
-const api = axios.create({
-    baseURL: 'http://localhost:8000/product_api/',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
+const Api = axiosInstance
 
 export default function useFileUpload() {
   const isUploading = ref(false);
@@ -26,7 +20,7 @@ export default function useFileUpload() {
       formData.append("file_url", file);
 
       try {
-        const response = await api.post("uploads/", formData, {
+        const response = await Api.post("product_api/uploads/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
