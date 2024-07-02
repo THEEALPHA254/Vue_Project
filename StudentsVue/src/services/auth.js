@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   baseURL: Api, 
 });
 
-// Interceptor to include token in headers
+
 axiosInstance.interceptors.request.use(config => {
   const token = localStorage.getItem('access_token');
 
@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(config => {
 
 
 
-// Interceptor to handle token refresh
+
 axiosInstance.interceptors.response.use(
   response => response,
   async error => {

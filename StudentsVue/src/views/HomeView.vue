@@ -66,10 +66,10 @@ async function updateStudent(id, updatedStudent) {
 onMounted(() => {
   fetchStudents();
 
-  if (studentStore.selectedStudent) {
+  if (studentStore.state.selectedStudent) {
     setTimeout(()=>{
 
-      addstudentref.value.setEditStudent(studentStore.selectedStudent);
+      addstudentref.value.setEditStudent(studentStore.state.selectedStudent);
       studentStore.clearSelectedStudent();
     },1000)
   }

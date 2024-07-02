@@ -55,6 +55,7 @@ function editStudent(id) {
   const student = all_students.value.find(student => student.id === id);
   if (student) {
     studentStore.setSelectedStudent(student);
+    console.log('editing student')
     router.push({ name: 'home' });
   } else {
     console.error('Student not found with id:', id);

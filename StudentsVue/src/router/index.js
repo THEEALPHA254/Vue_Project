@@ -6,9 +6,10 @@ import Sum from '@/views/Sum.vue'
 import Students from '@/views/Students.vue'
 import Register from '@/components/Register.vue'
 import LogIn from '@/components/LogIn.vue'
-import Product from '@/components/Product.vue'
+import Products from '@/views/Products.vue'
 import Category from '@/components/Category.vue'
 import Brand from '@/components/Brand.vue'
+import ProductView from'@/views/ProductView.vue'
 
 
 const router = createRouter({
@@ -54,9 +55,17 @@ const router = createRouter({
       }
     },
     {
-      path: "/product",
-      name: "product",
-      component: Product,
+      path: "/products",
+      name: "products",
+      component: Products,
+      meta: {
+        requireLogin: true
+      }
+    },
+    {
+      path: "/productsView",
+      name: "productsView",
+      component: ProductView,
       meta: {
         requireLogin: true
       }

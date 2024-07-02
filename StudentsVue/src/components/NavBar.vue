@@ -18,7 +18,7 @@
             <router-link class="nav-link" :class="{ active: $route.name === 'sum' }" aria-current="page"  :to="{ name: 'sum' }">Counter</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :class="{ active: $route.name === 'product' }" aria-current="page"  :to="{ name: 'product' }">Product</router-link>
+            <router-link class="nav-link" :class="{ active: $route.name === 'productView' }" aria-current="page"  :to="{ name: 'productsView' }">Product</router-link>
           </li>
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">

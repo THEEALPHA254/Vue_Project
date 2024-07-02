@@ -166,7 +166,7 @@ defineExpose({
   setEditStudent
 });
 // Watch for changes in the selectedStudent from the store
-watch(() => studentStore.selectedStudent, (newStudent) => {
+watch(() => studentStore.state.selectedStudent, (newStudent) => {
   if (newStudent) {
     setEditStudent(newStudent);
   }

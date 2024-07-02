@@ -4,7 +4,7 @@ import { ref } from 'vue';
 
 const Api = axiosInstance;
 
-export const useProductStore = defineStore('product', () => {
+export const useProductStore = defineStore('productStore', () => {
   const brands = ref([]);
   const categories = ref([]);
 
@@ -26,10 +26,25 @@ export const useProductStore = defineStore('product', () => {
     }
   };
 
+  const state = ref({
+    selectedProduct: null
+  })
+
+  const setSelectedProduct = (product) => {
+    state.value.selectedProduct = product;
+  };
+  const clearSelectedProduct= () => {
+    state.value.selectedProduct = null;
+  };
+
+
   return {
+    state,
     brands,
     categories,
     fetchBrands,
-    fetchCategories
+    fetchCategories,
+    setSelectedProduct,
+    clearSelectedProduct
   };
 });
