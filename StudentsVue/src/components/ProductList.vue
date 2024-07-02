@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { defineProps, defineEmits } from 'vue';
+import axiosInstance from '@/services/auth';
+
+const Api = axiosInstance
 
 const props = defineProps({
   all_products: Array
@@ -31,7 +34,30 @@ function editProduct(id) {
   emit('editProduct', id);
 }
 
+const addToWooCommerce = async (id) => {
+  try {
+    const product = props.all_products.find(p => p.id === id);
+    const response = await Api.post('product_api/add-product/', {
+      product: {
+        productName:product.productName,
+        sku:product.sku,
+        price:product.price,
+        sellingPrice:product.sellingPrice,
+        description:product.description,
 
+        image:[product.image],
+        
+        selectedBrand:product.selectedBrand,
+        selectedCategory:product.selectedCategory,
+      }
+    });
+    console.log('Product added to WooCommerce:', response.data);
+    // Optionally, handle success or update UI
+  } catch (error) {
+    console.error('Error adding product to WooCommerce:', error);
+    // Optionally, handle error or show a notification
+  }
+};
 
 
 </script>
@@ -50,6 +76,7 @@ function editProduct(id) {
                 <template v-slot:item.actions="{ item }">
                     <v-icon small @click="editProduct(item.id)" class="mr-2">mdi-pencil</v-icon>
                     <v-icon small @click.stop="deleteProduct(item.id)">mdi-delete</v-icon>
+                    <v-icon small @click.stop="addToWooCommerce(item.id)">mdi-cart-plus</v-icon>
                 </template>
                 </v-data-table>
                 

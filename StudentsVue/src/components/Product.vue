@@ -149,7 +149,7 @@ async function setEditProduct(product) {
   description.value = product.description;
 
   image.value = [product.image];
-
+  
   selectedBrand.value = product.selectedBrand;
   selectedCategory.value = product.selectedCategory;
   selectedProduct.value = product;
