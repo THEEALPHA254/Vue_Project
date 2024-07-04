@@ -10,6 +10,7 @@ import Products from '@/views/Products.vue'
 import Category from '@/components/Category.vue'
 import Brand from '@/components/Brand.vue'
 import ProductView from'@/views/ProductView.vue'
+import WooProduct from '@/views/AddProductWoo.vue'
 
 
 const router = createRouter({
@@ -82,6 +83,14 @@ const router = createRouter({
       path: "/brand",
       name: "brand",
       component: Brand,
+      meta: {
+        requireLogin: true
+      }
+    },
+    {
+      path: "/WooProduct",
+      name: "WooProduct",
+      component: WooProduct,
       meta: {
         requireLogin: true
       }

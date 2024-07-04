@@ -33,9 +33,8 @@ axiosInstance.interceptors.response.use(
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
-        const response = await axiosInstance.post('${Api}token/refresh/', {
+        const response = await axiosInstance.post(`${Api}token/refresh/`, {
           refresh: refreshToken,
-          
         });
         localStorage.setItem('access_token', response.data.access);
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
