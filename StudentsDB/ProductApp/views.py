@@ -4,8 +4,9 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Brand, Category, Product, FileUpload, WooProduct
-from .serializers import BrandSerializer, CategorySerializer, ProductSerializer, WooProductSerializer
+from .models import *
+from .serializers import *
+from woocommerce import API
 
 # Brand Views
 @api_view(['GET', 'POST'])
@@ -127,23 +128,68 @@ def upload_file(request):
 @api_view(['POST'])
 def AddProductToWoo(request):
     if request.method == 'POST':
-        serializer = WooProductSerializer(data=request.data)
+        serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
-            product_data = serializer.validated_data
+            product_data = serializer.validated_data["selected_ids"]
+            for id in product_data:
+                product = Product.objects.get(pk=id)
+                name = product.name
+                
 
-            # WooCommerce API credentials
-            consumer_key = 'ck_884ad6f537249d074d83b61926107676bda487ae'
-            consumer_secret = 'cs_7168f43ac95297f908708eeaf2d0a7f01f9d220c'
-            url = 'https://emmerce.co.ke/test/wp-json/wc/v3/Products'
+                wcapi = API(
+                    url="https://emmerce.co.ke/test",
+                    consumer_key="ck_884ad6f537249d074d83b61926107676bda487ae",
+                    consumer_secret="cs_7168f43ac95297f908708eeaf2d0a7f01f9d220c",
+                    wp_api=True,
+                    version="wc/v3"
+                )
 
-            response = request.post(
-                url,
-                auth=(consumer_key, consumer_secret),
-                json=product_data
-            )
+                data = {
+                    "name": name,
+                    "sku": product.sku,
+                    "type": "simple",
+                    "regular_price": str(product.price),
+                    "selling_price": str(product.selling_price),
+                    "description": product.description,
+                    # "short_description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+                    "categories": [
+                        {
+                            "id": product.category.id
+                        },
+                    ],
+                    "brands":[
+                        {
+                            "id": product.brand.id
+                        }
+                    ],
+                    "images": [
+                        {
+                            "src": product.image
+                        }
+                    ]
+                }
 
-            if response.status_code == 201:
-                return Response(response.json(), status=status.HTTP_201_CREATED)
-            return Response(response.json(), status=response.status_code)
+                print(wcapi.post("products", data).json())
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status": "success", "message": "Products added successfully."})
+        else:
+            return Response(serializer.errors, status=400)
+    return Response({"error": "Invalid request method."}, status=405)
+            
+
+        #     # WooCommerce API credentials
+        #     consumer_key = 'ck_884ad6f537249d074d83b61926107676bda487ae'
+        #     consumer_secret = 'cs_7168f43ac95297f908708eeaf2d0a7f01f9d220c'
+        #     url = 'https://emmerce.co.ke/test/wp-json/wc/v3/Products'
+
+        #     response = request.post(
+        #         url,
+        #         auth=(consumer_key, consumer_secret),
+        #         json=product_data
+        #     )
+
+        #     if response.status_code == 201:
+        #         return Response(response.json(), status=status.HTTP_201_CREATED)
+        #     return Response(response.json(), status=response.status_code)
+
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -16,10 +16,13 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
-class WooProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WooProduct
-        fields = '__all__'
+# class WooProductSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = WooProduct
+#         fields = '__all__'
+
+class UploadSerializer(serializers.Serializer):
+    selected_ids = serializers.ListField(allow_null=True,required=False)
 
 class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:
