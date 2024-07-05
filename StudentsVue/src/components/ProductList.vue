@@ -34,7 +34,8 @@
             </tr>
           </template>
         </v-data-table>
-        <button @click="submitForm">Add Selected Products to WooCommerce</button>
+        <!-- <button @click="submitForm">Add to WooCommerce</button> -->
+        <v-btn color="primary" dark type="submit" @click="submitForm">Add to WooCommerce</v-btn>
         <div v-if="message">{{ message }}</div>
       </div>
     </div>
@@ -45,6 +46,7 @@
 import { ref } from 'vue';
 import { defineProps, defineEmits } from 'vue';
 import axiosInstance from '@/services/auth';
+import { toast } from 'vue3-toastify';
 
 const Api = axiosInstance;
 
@@ -90,6 +92,7 @@ async function submitForm() {
     console.log('Submitting Selected Products:', selectedProducts.value); // Debugging statement
     const response = await Api.post('/product_api/add-product/', { selected_ids: selectedProducts.value });
     console.log('Response:', response.data); // Debugging statement
+    toast.success("Product added to woo successfully")
     message.value = response.data.message;
   } catch (error) {
     console.error('There was an error adding the products!', error);

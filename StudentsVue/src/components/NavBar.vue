@@ -20,6 +20,9 @@
           <li class="nav-item">
             <router-link class="nav-link" :class="{ active: $route.name === 'productView' }" aria-current="page"  :to="{ name: 'productsView' }">Product</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :class="{ active: $route.name === 'products' }" aria-current="page"  :to="{ name: 'products' }">Product List</router-link>
+          </li>
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">
 

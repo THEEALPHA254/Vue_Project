@@ -4,10 +4,10 @@
       <v-row>
         <v-col cols="12">
           <v-alert v-if="all_products.length === 0" type="warning" text>
-            Fill the form
+            Please add a product
           </v-alert>
           <v-alert v-else type="success" text>
-            Form successfully filled
+            Select a Product to add it to Woo!
           </v-alert>
         </v-col>
         <v-col cols="12">
