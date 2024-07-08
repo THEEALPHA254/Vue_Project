@@ -164,7 +164,7 @@ def AddProductToWoo(request):
                     ],
                     "images": [
                         {
-                            "src": product.image
+                            "src": "https://m.media-amazon.com/images/I/81EutCnwcpL._SL1500_.jpg"
                         }
                     ]
                 }
